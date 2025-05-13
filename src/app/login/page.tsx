@@ -7,40 +7,41 @@ import axios from "axios";
 import Image from "next/image";
 
 export default function LoginPage() {
-      const router = useRouter();
-  
+  const router = useRouter();
+
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
-    const [loading, setLoading] = useState(false);
-  const onLogin = async ()=>{
-try {
-  setLoading(true);
-  const response = await axios.post("/api/users/login", user);
-  console.log("Login suceess", response.data);
-  router.push('/profile')
-} catch (error:any) {
-  console.log("Login Failed", error.message)
-}finally{
-  setLoading(false)
-}
-  }
-    useEffect(()=>{
-      if(user.email.length > 0 && user.password.length > 0) {
-          setButtonDisabled(false)
-      }else{
-          setButtonDisabled(true)
-      }
-    },[user])
+  const [loading, setLoading] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const onLogin = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/users/login", user);
+      console.log("Login suceess", response.data);
+      router.push("/profile");
+    } catch (error: any) {
+      console.log("Login Failed", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (user.email.length > 0 && user.password.length > 0) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [user]);
   return (
     <div className='bg-[#1F1F1F] h-screen flex flex-col  relative'>
       {/* left */}
       <div className='bg-[#1F1F1F] text-white p-4 w-full h-full md:w-[50%] md:h-[90%] flex flex-col justify-center items-center'>
         <h1 className='text-3xl font-bold text-center'>
           Welcome Back! <br />
-        We Missed You.
+          We Missed You.
         </h1>
         <p className='text-lg my-4'>Log in to continue where you left off.</p>
         <Image src='/logo.png' height={300} width={300} alt='Logo' />
@@ -71,19 +72,32 @@ try {
             placeholder='password'
           />
         </div>
-        <div className="w-7/10">
-          <input type='checkbox' id="check1" className="my-4" />
-          <label htmlFor='check1'>
+        <div className='flex items-center gap-2'>
+          <input
+            type='checkbox'
+            id='check1'
+            className='my-4'
+            checked={isChecked}
+            onChange={(e) => setIsChecked(e.target.checked)}
+          />
+          <label htmlFor='check1' className='text-xs'>
             By creating an account, I agree to our Terms of use and Privacy
             Policy
           </label>
         </div>
         <button
-        onClick={onLogin}
-         className='bg-[#1F1F1F] text-white my-4 px-3 py-1 rounded-lg'>
+          onClick={onLogin}
+          className={`bg-[#1F1F1F] text-white my-4 px-3 py-1 rounded-lg ${
+            buttonDisabled || !isChecked ? "opacity-50 cursor-not-allowed" : "hover:bg-black"
+          }`}>
           Login
         </button>
-        <p>Don't have an account yet? <Link href='/signup' className="text-green-600">Signup here</Link> </p>
+        <p>
+          Don't have an account yet?{" "}
+          <Link href='/signup' className='text-green-600'>
+            Signup here
+          </Link>{" "}
+        </p>
       </div>
     </div>
   );

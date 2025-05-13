@@ -7,7 +7,7 @@ import axios from "axios";
 import Image from "next/image";
 
 export default function SignupPage() {
-    const router = useRouter();
+  const router = useRouter();
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -15,29 +15,32 @@ export default function SignupPage() {
   });
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
 
-  const onSignup = async ()=>{
+  const onSignup = async () => {
     try {
-        setLoading(true);
-        const response = await axios.post('/api/users/signup', user)
-        console.log("Signup success", response.data);
-        router.push('/login');
-    } catch (error:any) {
-        console.log("Signup failed", error.message)
-    }finally{
-        setLoading(false)
+      setLoading(true);
+      const response = await axios.post("/api/users/signup", user);
+      console.log("Signup success", response.data);
+      router.push("/login");
+    } catch (error: any) {
+      console.log("Signup failed", error.message);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  useEffect(()=>{
-    if(user.email.length > 0 && user.password.length > 0 && user.username.length > 0) {
-        setButtonDisabled(false)
-    }else{
-        setButtonDisabled(true)
+  useEffect(() => {
+    if (
+      user.email.length > 0 &&
+      user.password.length > 0 &&
+      user.username.length > 0
+    ) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
     }
-  },[user])
-
-
+  }, [user, isChecked]);
 
   return (
     <div className='bg-[#1F1F1F] h-screen flex flex-col  relative'>
@@ -52,7 +55,9 @@ export default function SignupPage() {
       </div>
       {/* Right */}
       <div className='bg-white text-gray-600 h-full md:absolute md:left-[48%] md:top-[5%] md:w-[50%] md:h-[90%] md:rounded-lg p-4'>
-        <h2 className='text-2xl font-bold text-black'>{loading ? "Processing" : "Sign up now"}</h2>
+        <h2 className='text-2xl font-bold text-black'>
+          {loading ? "Processing" : "Sign up now"}
+        </h2>
         <div className='my-2'>
           <label htmlFor='username'>User name : </label> <br />
           <input
@@ -87,24 +92,41 @@ export default function SignupPage() {
             placeholder='password'
           />
         </div>
-        <div className="">
-          <input type='checkbox' id="check1" className="my-2" />
-          <label htmlFor='check1' className="text-xs">
-            By creating an account, I agree to our Terms of use and Privacy Policy
-          </label>{" "}
-          <br />
-          <input type='checkbox' id="check2" className="my-2" />
-          <label htmlFor='check2' className="text-xs">
-           By creating an account, I am also consenting to receive SMS messages and emails
-          </label>
-          <br />
+        <div>
+          <div className='flex items-center gap-2'>
+            <input
+              type='checkbox'
+              id='check1'
+              className='my-2'
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+            />
+            <label htmlFor='check1' className='text-xs'>
+              By creating an account, I agree to our Terms of use and Privacy
+              Policy
+            </label>
+          </div>
+          <div className='flex items-center gap-2'>
+            <input type='checkbox' id='check2' className='my-2' />
+            <label htmlFor='check2' className='text-xs'>
+              By creating an account, I am also consenting to receive SMS
+              messages and emails
+            </label>
+          </div>
         </div>
         <button
-        onClick={onSignup}
-         className='bg-[#1F1F1F] text-white my-4 px-3 py-1 rounded-lg'>
+          onClick={onSignup}
+          className={`bg-[#1F1F1F] text-white my-4 px-3 py-1 rounded-lg ${
+            buttonDisabled || !isChecked ? "opacity-50 cursor-not-allowed" : "hover:bg-black"
+          }`}>
           Signup
         </button>
-        <p>Already have an account? <Link href='/login' className="text-green-600">Login here</Link> </p>
+        <p>
+          Already have an account?{" "}
+          <Link href='/login' className='text-green-600'>
+            Login here
+          </Link>{" "}
+        </p>
       </div>
     </div>
   );
