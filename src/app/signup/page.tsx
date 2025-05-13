@@ -1,20 +1,44 @@
 "use client";
+
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import backgroundImage from "../../../public/bg-img.png";
 import Image from "next/image";
 
 export default function SignupPage() {
+    const router = useRouter();
   const [user, setUser] = useState({
     email: "",
     password: "",
     username: "",
   });
-  const onSignup = async ()=>{
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  const onSignup = async ()=>{
+    try {
+        setLoading(true);
+        const response = await axios.post('/api/users/signup', user)
+        console.log("Signup success", response.data);
+        router.push('/login');
+    } catch (error:any) {
+        console.log("Signup failed", error.message)
+    }finally{
+        setLoading(false)
+    }
   }
+
+  useEffect(()=>{
+    if(user.email.length > 0 && user.password.length > 0 && user.username.length > 0) {
+        setButtonDisabled(false)
+    }else{
+        setButtonDisabled(true)
+    }
+  },[user])
+
+
+
   return (
     <div className='bg-[#1F1F1F] h-screen flex flex-col  relative'>
       {/* left */}
@@ -28,7 +52,7 @@ export default function SignupPage() {
       </div>
       {/* Right */}
       <div className='bg-white text-gray-600 h-full md:absolute md:left-[48%] md:top-[5%] md:w-[50%] md:h-[90%] md:rounded-lg p-4'>
-        <h2 className='text-2xl font-bold text-black'>Sign up now</h2>
+        <h2 className='text-2xl font-bold text-black'>{loading ? "Processing" : "Sign up now"}</h2>
         <div className='my-2'>
           <label htmlFor='username'>User name : </label> <br />
           <input
@@ -64,14 +88,14 @@ export default function SignupPage() {
           />
         </div>
         <div className="">
-          <input type='checkbox' id="check1" className="my-4" />
-          <label htmlFor='check1'>
+          <input type='checkbox' id="check1" className="my-2" />
+          <label htmlFor='check1' className="text-xs">
             By creating an account, I agree to our Terms of use and Privacy Policy
           </label>{" "}
           <br />
-          <input type='checkbox' id="check2" className="my-4" />
-          <label htmlFor='check2'>
-           By creating an account, I am also consenting to receive SMS messages and emails, including product new feature updates, events, and marketing promotions.
+          <input type='checkbox' id="check2" className="my-2" />
+          <label htmlFor='check2' className="text-xs">
+           By creating an account, I am also consenting to receive SMS messages and emails
           </label>
           <br />
         </div>

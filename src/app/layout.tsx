@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${roboto.variable} ${robotoMono.variable}`}>
-      <body className="font-sans">{children}</body>
+    <html lang="en" className={`${roboto.className} ${robotoMono.className}`}>
+      <body>{children}</body>
     </html>
   );
 }
